@@ -190,13 +190,19 @@ public function NavbarAdmin(){
         <form method="POST" class="comparer">
         <div class="heading-box">
            <h1 class="heading">Véhicule Comparaison</h1>
-           <ul class="types">
-            <?php
-           foreach($types as $type){
-                  echo'<li id="'.$type["idtype"].'">'.$type["nom"].'</li>';
-                  }
-                  ?>
-           </ul>
+           <div class="types-row">
+             <ul class="types">
+              <?php
+             foreach($types as $type){
+                    echo'<li id="'.$type["idtype"].'">'.$type["nom"].'</li>';
+                    }
+                    ?>
+             </ul>
+             <div class="demo-hint">
+               <i class="fa-solid fa-circle-info"></i>
+               <span>Démo : <strong>BMW/Yamaha</strong> pour Voiture/Moto, <strong>Tata/Volvo</strong> pour Camion.</span>
+             </div>
+           </div>
         </div>
         <div class="compar-box">
        
@@ -208,23 +214,28 @@ public function NavbarAdmin(){
     </section>
         <?php
     }
-
-
     public function MarquePrincipale(){
-        $r=new marqueController();
-        $marques=$r->getMarquePrincipale();
-         ?>
-        <h1 class="heading">Marques Principales</h1>
-        <div class="marques">
-        <?php
-        foreach ($marques as $marque) {
-            echo '<div class="marque-box"><a href="index.php?router=Marque&id='. $marque['id_marque'] .'"><img src="'. $marque['url'] .'"/></a></div>';
+    $r=new marqueController();
+    $marques=$r->getMarquePrincipale();
+     ?>
+    <h1 class="heading">Marques Principales</h1>
+    <div class="marques">
+    <?php
+    foreach ($marques as $marque) {
+        $isDemo = isset($marque['nom']) && strtolower($marque['nom']) === 'bmw';
+        echo '<div class="marque-box">';
+        echo '<a href="index.php?router=Marque&id='. $marque['id_marque'] .'">';
+        if ($isDemo) {
+            echo '<span class="demo-tag">Voir la démo <i class="fa-solid fa-arrow-right"></i></span>';
         }
-        ?>
-        </div>
-
-<?php
+        echo '<img src="'. $marque['url'] .'"/></a>';
+        echo '</div>';
     }
+    ?>
+    </div>
+<?php
+}
+
     public function reviewrateuser($ismarque,$entity){
         if(isset($_SESSION["userId"])){?>
         <div class="review-rating">
@@ -255,42 +266,38 @@ public function NavbarAdmin(){
         </div>
         </div>
         <?php } 
+    }  
+
+
+ public function allavis($ismarque,$entity){
+    ?>
+    <div class="tousavis-container" isMarque="<?php echo $ismarque; ?>" data-value-review="<?php echo $ismarque && isset($entity["idmarque"]) ? $entity["idmarque"] : $entity; ?>">
+    <h2 class="heading-2 mb-1" id="tousavis-title">Autre avis</h2>
+    <div class="tousavis"></div>
+    </div>
+    <?php
+}
+
+
+public function avis($ismarque,$entity){
+    ?>
+<div class="avis" isMarque="<?php echo $ismarque; ?>" data-value-review="<?php echo $ismarque && isset($entity["idmarque"]) ? $entity["idmarque"] : $entity; ?>">
+    <?php
+    if(isset($_SESSION["userId"])){
+    echo '<h1 class="heading">Avis & Note  </h1>';
+    } else {
+        echo '<h1 class="heading">Avis  </h1>'; 
     }
-
-
-    public function allavis($ismarque,$entity){
-        ?>
-        <div class="tousavis-container" isMarque="<?php echo $ismarque; ?>" data-value-review="<?php echo $ismarque && isset($entity["idmarque"]) ? $entity["idmarque"] : $entity; ?>">
-        <h2 class="heading-2 mb-1">Autre avis</h2>
-        <div class="tousavis"></div>
-        </div>
-        <?php
-    }
-
-
-
-
-    public function avis($ismarque,$entity){
-        ?>
-    <div class="avis" isMarque="<?php echo $ismarque; ?>" data-value-review="<?php echo $ismarque && isset($entity["idmarque"]) ? $entity["idmarque"] : $entity; ?>">
-        <?php
-        if(isset($_SESSION["userId"])){
-        echo '<h1 class="heading">Avis & Note  </h1>';
-        } else {
-            echo '<h1 class="heading">Avis  </h1>'; 
-        }
-        ?>
-        <div class="avis-appr-container">
-        <h2 class="heading-2 mb-1">Les avis appréciés</h2>
-        <div class="avis-appr"></div>
-        </div>
-        <?php $this->reviewrateuser($ismarque,$entity);  
-        ?>
-       
-        </div>
-
-        <?php
-    }
+    ?>
+    <div class="avis-appr-container">
+    <h2 class="heading-2 mb-1" id="avis-appr-title">Les avis appréciés</h2>
+    <div class="avis-appr"></div>
+    </div>
+    <?php $this->reviewrateuser($ismarque,$entity);  
+    ?>
+    </div>
+    <?php
+}
 
 
 
@@ -327,7 +334,6 @@ $(document).ready(() => {
     let marquerating=$("#marque-info");
     getmarqueVehicules(vehiculesmarque,avisvehicules);
     getBestReview();// les avis appréciés
-    getallavis();//tous les avis  
     getNote("true",marquerating.attr("data-value"),marquerating);
     getRate();//GET RATE OF AN USER ;
     getDiapo();
@@ -835,8 +841,9 @@ $(".form-avis").submit((e)=>{
         }
 
 
-function getBestReview(){
+let bestReviewIds = [];
 
+function getBestReview(){
     let globalcontainer=$(".avis-appr");
     $.ajax({
         url: "index.php?router=BestReview",
@@ -846,13 +853,27 @@ function getBestReview(){
             idEntity:$(".avis").attr("data-value-review"),
         },
         success: (res) => {
+            var avisall = [];
             if(res.trim() !== ""){
-            $result=JSON.parse(res);
-            if($result.status == "success"){
-                var avisall=$result.data;
-                createcontaineravis(avisall,globalcontainer);
+                $result=JSON.parse(res);
+                if($result.status == "success"){
+                    avisall = $result.data;
                 }
-               }} , 
+            }
+            if(avisall.length > 0){
+                // il y a des avis appréciés -> on garde les 2 sections
+                bestReviewIds = avisall.map(a => a.idavis);
+                $(".avis-appr-container").show();
+                $("#tousavis-title").text("Autre avis");
+                createcontaineravis(avisall, globalcontainer);
+            } else {
+                // pas encore d'avis appréciés -> on cache cette section
+                bestReviewIds = [];
+                $(".avis-appr-container").hide();
+                $("#tousavis-title").text("Tous les avis");
+            }
+            getallavis(); // toujours appelé après, une fois bestReviewIds connu
+        } , 
             error:(error)=>{
                 console.log(error.message);
             } ,   
@@ -887,8 +908,14 @@ function getBestReview(){
             }
             
             //si on click sur le button on va updater database par les changements de like unlike 
-            likebtn.click(()=>{
-            handlelike(avis.idavis);});
+           likebtn.click(()=>{
+            if(id !== 0){
+                handlelike(avis.idavis);
+            } else {
+                $(".popup-login").show();
+                $(".popup-login-bg").show();
+            }
+        });
             //append les élements de l'avis pour les affichers (dynamiquement )
             infoavis.append(dateavis);
             infoavis.append(useravis);
@@ -932,47 +959,62 @@ function getBestReview(){
 }
 function getallavis(){
 var globalcontainer=$(".tousavis")
-// Avoir toute les avis d'une entité (marque ou véhicule )
 $.ajax({
     url: "index.php?router=AllAvis",
     method: "POST",
     data: {
-        isMarque:$(".tousavis-container").attr("isMarque"),//pour savoir si c'est marque ou véhicule 
+        isMarque:$(".tousavis-container").attr("isMarque"),
         idEntity:$(".tousavis-container").attr("data-value-review"),
     },
     success: (res) => {
+        var avisall = [];
         if(res.trim() !== ""){
-        $result=JSON.parse(res);
-        if($result.status == "success"){// Si success on va créer le container pour afficher tout les avis 
-            var avisall=$result.data;
-            function renderavis(debut){
-                const fin =debut +5;
-                const avistoshow=avisall.slice(debut,fin)
-                createcontaineravis(avistoshow,globalcontainer) 
-                } 
-                let prev=$('<button  class="voirplus-btn avis-btn ml-5">Previous</button>');
-                let next=$('<button  class="voirplus-btn  avis-btn">Next</button>');
-                $(".tousavis-container").append(prev);
-                $(".tousavis-container").append(next);
-                renderavis(0);
-                let debut= 5 ; 
-                next.click(()=>{
-                    renderavis(debut);
-                    debut +=5;
-                    if(debut>=avisall.length){debut=0}
-                    })
-                prev.click(()=>{
+            $result=JSON.parse(res);
+            if($result.status == "success"){
+                avisall = $result.data.filter(avis => !bestReviewIds.includes(avis.idavis));
+            }
+        }
+
+        $(".tousavis-container .avis-btn").remove();
+
+        if(avisall.length === 0){
+            globalcontainer.empty();
+            globalcontainer.append('<p>Il n\'y a pas d\'avis pour le moment</p>');
+            return;
+        }
+
+        function renderavis(debut){
+            const fin =debut +5;
+            const avistoshow=avisall.slice(debut,fin)
+            createcontaineravis(avistoshow,globalcontainer) 
+            } 
+
+        renderavis(0);
+        let debut= 5 ; 
+
+        if(avisall.length > 3){
+            let prev=$('<button  class="voirplus-btn avis-btn ml-5">Previous</button>');
+            let next=$('<button  class="voirplus-btn  avis-btn">Next</button>');
+            $(".tousavis-container").append(prev);
+            $(".tousavis-container").append(next);
+
+            next.click(()=>{
                 renderavis(debut);
-                debut -=5;
-                if(debut<0){debut=0}
+                debut +=5;
+                if(debut>=avisall.length){debut=0}
                 })
-                }}}, 
-        error:(error)=>{
-            console.log(error.message);//si error en affiche l'erreur 
-        } ,   
+            prev.click(()=>{
+            renderavis(debut);
+            debut -=5;
+            if(debut<0){debut=0}
+            })
+        }
+        }, 
+    error:(error)=>{
+        console.log(error.message);
+    } ,   
     }); 
-}    
-      
+}     
 //Input pour rating (radio )
 var ratinginput=$(".rating input");     
 //Selon la note on colorer les icons 
@@ -1059,17 +1101,22 @@ function getNote(ismarque,identity,containernote){
 /* ----------------------Avoir tous les véhicules d'une marque --------*/
 function getmarqueVehicules($idmarque,$avis){
     $.ajax({
-    url: "index.php?router=allVehicules",//url pour appellation de controlleur pour avoir les véhicules d'une marque 
+    url: "index.php?router=allVehicules",
     method: "POST",
     data:{
         idmarque:$idmarque,
      } ,
     success: (res) => {
-        if(res.trim() !== ""){
        const vehicules=JSON.parse(res);
+       $(".vehicules-container").empty();
+
+       if(vehicules.length === 0){
+           $(".vehicules-container").append('<p class="no-vehicule">Aucun véhicule disponible pour cette marque pour le moment.</p>');
+           return;
+       }
+
        let containervehicule = $('<div class="container-vehicule"></div>');
         $.each(vehicules,(index, vehicule) => {
-/*----------------------------Création de box de véhicule  ------------------------------*/
        let vehiculebox=$('<div class="vehicule-box"> </div>');
        let imagecontainer=$('<div class="image-container"> <div>');
        let atag;
@@ -1084,7 +1131,7 @@ function getmarqueVehicules($idmarque,$avis){
        let version=$('<p> </p>').html(vehicule.versionn);
        let rate=$('<div> </div>');
        let fav=$('<div class="favoris-icon" data-value="'+vehicule.idvehicule+'"> </div>');
-       let favicon=null;
+       let favicon=$('<p></p>');
        let id =vehicule.idvehicule;
         <?php if(isset($_SESSION["userName"])){ ?>
             if(vehicule.userfavoris =='1' && id !== 0 ){
@@ -1093,7 +1140,10 @@ function getmarqueVehicules($idmarque,$avis){
         else
         if(vehicule.userfavoris =='0' && id !== 0){
             favicon = $('<i class="fa-regular fa-bookmark" data-value="'+vehicule.idvehicule+'"></i>');
-        }      
+        }   
+        else{
+            favicon = $('<p></p>');
+        }   
         <?php } ?>
        favicon.click(()=>handleFavoris(vehicule.idvehicule));
        getNote("false",id,rate);
@@ -1107,10 +1157,9 @@ function getmarqueVehicules($idmarque,$avis){
        fav.append(favicon);
        vehiculebox.append(fav);
        containervehicule.append(vehiculebox);
-/*-------------------------------------- ------------------------------*/
         });
        $(".vehicules-container").append(containervehicule);
-        }},
+        },
     error: function(error) {
           console.log(error.message);
         }  

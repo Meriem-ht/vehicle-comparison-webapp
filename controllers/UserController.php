@@ -111,12 +111,13 @@ class userController{
 
 
 //Get the current rate 
-  public function getRate($isMarque,$idEntity){
-    $isMarque=filter_var($isMarque,FILTER_VALIDATE_BOOLEAN);
+public function getRate($isMarque, $idEntity){
+    $isMarque = filter_var($isMarque, FILTER_VALIDATE_BOOLEAN);
+    $iduser = isset($_SESSION['userId']) ? $_SESSION['userId'] : null;
     $obj = new userModel();
-    $r = $obj->getRate($isMarque,$idEntity);   
+    $r = $obj->getRate($isMarque, $idEntity, $iduser);   
     echo json_encode($r);
-  }
+}
 
 
 

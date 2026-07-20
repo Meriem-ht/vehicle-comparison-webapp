@@ -6,7 +6,7 @@ class marqueModel{
     public function getMarquePrincipale(){
         $obj= new connexion();
         $c=$obj->connect();
-        $qtf="SELECT i.url ,im.id_marque
+        $qtf="SELECT i.url,m.nom ,im.id_marque
         FROM image i
         JOIN image_marque im ON im.id_image=i.idimage
         JOIN marque m ON im.id_marque=m.idmarque

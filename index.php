@@ -125,7 +125,7 @@ if (isset($_GET['router'])){
                 break;
         case 'Vehiculeavis':
             $r=new avisController();
-            $r->showvehiculsavis($_GET['id']);
+            $r->showvehiculesavis($_GET['id']);
             break;
         case 'Marquesall' :
             $r=new marqueController();

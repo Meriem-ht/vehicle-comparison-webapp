@@ -5,6 +5,7 @@ class newsView{
 
     public function showNews(){
         $r=new newsController();
+        $common=new commonViews();
         $news=$r->getallNews();
         ob_start();
         ?>
@@ -28,6 +29,7 @@ class newsView{
             ?>
         </div>
         <?php
+        $common->script();
         $content = ob_get_clean();
         require("layout.php");
     }

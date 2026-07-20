@@ -95,9 +95,9 @@ class avisController{
 
 
         //Les avis d'un véhicule 
-        public function showVehiculsAvis($idvehicule){
+        public function showVehiculesAvis($idvehicule){
             $obj= new avisView();
-            $r=$obj->showvehiculsavis($idvehicule);
+            $r=$obj->showvehiculesavis($idvehicule);
             return $r; 
         }
 

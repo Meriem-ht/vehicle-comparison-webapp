@@ -1,6 +1,6 @@
 <?php
 class connexion{
-    private $dbname="tdw";
+    private $dbname="tdw2";
     private $host="127.0.0.1";
     private $user="root";
     private $password="";

@@ -17,7 +17,6 @@ class guideView{
         ?>
         <div class="guide">
          <p><?php echo $guide[0]["texte"];?></p>
-         <img src="<?php echo $guide[0]["url"];?>">
         </div>
        
         <?php

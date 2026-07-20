@@ -143,7 +143,6 @@ class vehiculeView{
          Les vehicules de cette marque 
         </h1>
          <div class="vehicules-container" data-value="<?php echo $idmarque;?>" avis="false">
-                <!-- Container is displayed by request ajax  -->
         </div>
         <?php
         $content = ob_get_clean();
@@ -153,7 +152,6 @@ class vehiculeView{
 
     public function vehiculeDetail($idvehicule){
         $common=new commonViews();
-        $common->script();
         $r=new vehiculeController();
         $vehicule=$r->getVehiculeById($idvehicule);
         $caracts=$r->getVehiculecarac($idvehicule);
@@ -161,6 +159,7 @@ class vehiculeView{
         $this->infogeneral($vehicule);
         $this->caracteristiques($caracts,$idvehicule,$vehicule);    
         $common->avis("false",$idvehicule);
+        $common->script();
         $content = ob_get_clean();
         require("layout.php");
     }

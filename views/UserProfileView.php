@@ -13,7 +13,6 @@ class userView{
          if(!isset($vehicules)){
             $vehicules=null;
         } 
-        $common->script();  
         ob_start();
         ?>
         <h1 class="heading">Informations utilisateurs</h1>
@@ -51,7 +50,7 @@ class userView{
      
         <?php 
 
-  
+        $common->script();  
         $content = ob_get_clean();
         include_once("layout.php");
 

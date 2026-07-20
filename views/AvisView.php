@@ -39,23 +39,25 @@ class avisView{
 
 
      public function showmarquevehiculesavis($idmarque){
-        ob_start();
-        $r=new commonViews();
-        $r->script();
-        ?>
-        <h1 class="heading">
-         Les vehicules de cette marque 
-        </h1>
-         <div class="vehicules-container" data-value="<?php echo $idmarque;?>" avis="true">
-                <!-- Container is displayed by request ajax  -->
-        </div>
-        <?php
-        $content = ob_get_clean();
-        require("layout.php");
-    }
+    ob_start();
+    $r=new commonViews();
+    $r->script();
+    ?>
+    <h1 class="heading">
+     Les vehicules de cette marque 
+    </h1>
+     <div class="vehicules-container" data-value="<?php echo $idmarque;?>" avis="true"> </div>
+    <div>
+    <?php
+    $r->avis("true",$idmarque);     
+    $r->allavis("true",$idmarque);   ?>
+    </div>
+    <?php
+    $content = ob_get_clean();
+    require("layout.php");
+}
 
-
-    public function showvehiculsavis($idvehicule){
+ public function showvehiculesavis($idvehicule){
         $v=new vehiculeController();
         $vehicule=$v->getVehiculeById($idvehicule);
         ob_start();
@@ -84,6 +86,7 @@ class avisView{
         $content = ob_get_clean();
         require("layout.php"); 
     }
+    
 
 
 

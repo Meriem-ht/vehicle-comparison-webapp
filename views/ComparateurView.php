@@ -6,7 +6,6 @@ class comparateurView{
 
     public function showComparateur(){
       $r=new commonViews();
-      $r->script();
         ob_start();
         ?>
         <h1 class="heading">
@@ -15,6 +14,9 @@ class comparateurView{
         <?php
          $r->ComparSection();
          $this->resultCompar();
+        
+       $r->script();
+
         $content = ob_get_clean();
         require("layout.php");
     }

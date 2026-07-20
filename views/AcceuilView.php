@@ -105,7 +105,6 @@ class acceuilView{
 
          
          </div>
-         <!-- <button class="submit-btn">COMPARER</button> -->
          </div>
        </div>
      </div>
@@ -134,10 +133,10 @@ class acceuilView{
             <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
-        <script src="./jquery-3.6.0.js"></script>
-            <script src="./jquery-3.6.0.min.js"></script>
-            <script src="https://kit.fontawesome.com/356c3beb3c.js" crossorigin="anonymous"></script>
-            <link rel="stylesheet" href="./style.css">
+       <script src="./assets/js/jquery-3.6.0.js"></script>
+       <script src="./assets/js/jquery-3.6.0.min.js"></script>
+       <script src="https://kit.fontawesome.com/356c3beb3c.js" crossorigin="anonymous"></script>
+       <link rel="stylesheet" href="./assets/css/style.css">
         </head>
         <body>
         <?php
@@ -159,10 +158,10 @@ class acceuilView{
             $this->resultCompar();
             $this->populaireComparaison();
              ?>
-           
-             <?php
+           </div>
+        <?php
             $r->Footer();
-            ?>
+          ?>
         </body>
         
         </html>

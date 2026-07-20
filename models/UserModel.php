@@ -91,10 +91,11 @@ class userModel{
         $qtf->bindParam(1, $iduser);
         $qtf->bindParam(2, $idfavoris);
         $qtf->execute();
+        $r = $qtf->fetch(PDO::FETCH_ASSOC);
         
         $obj->disconnect($c);
     
-        return ($qtf->rowCount()>0); 
+        return ($r !== false); 
     }
 
     //Ajouter aux favoris une véhicule 
@@ -184,25 +185,24 @@ public function getTotalRate($isMarque,$idEntity){
 
 //Avoir le Rate d'une entité 
 
-public function getRate($isMarque,$idEntity){
+public function getRate($isMarque, $idEntity, $iduser){
     $obj = new connexion();
     $c = $obj->connect();
-    $entity=$isMarque?'n.id_marque':'n.id_vehicule';
+    $entity = $isMarque ? 'n.id_marque' : 'n.id_vehicule';
     $query = "SELECT n.notevalue 
     FROM note n 
-    WHERE n.estmarque=:ismarque  AND $entity= :iden";
-
+    WHERE n.estmarque = :ismarque AND $entity = :iden AND n.id_user = :iduser";
 
     $qtf = $c->prepare($query);
     $qtf->bindParam(':ismarque', $isMarque);
     $qtf->bindParam(':iden', $idEntity);
+    $qtf->bindParam(':iduser', $iduser);
     $qtf->execute();
     $r = $qtf->fetch(PDO::FETCH_ASSOC);
     $obj->disconnect($c);
 
     return $r;  
 }
-
 //Favoris d'un user 
   public function getUserFavoris($iduser){
     $obj = new connexion();
