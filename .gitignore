@@ -1,0 +1,14 @@
+# Environnement
+.vscode/
+.env
+
+# Système
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Dossiers temporaires
+/tmp/
+/cache/
