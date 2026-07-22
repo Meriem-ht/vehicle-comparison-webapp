@@ -13,9 +13,13 @@ class commonViews{
         $r=new socialController();
         $socials=$r->getSocial(); 
         echo  '<ul class="media">';
-        foreach ($socials as $social) {
-            echo '<li><a href="' . $social['lien'] . '"><img src="./images/' . $social['nomsocial'] . '"/></a></li>';
-        }
+         foreach ($socials as $social) {
+        echo '<li>';
+        echo '<a href="' . htmlspecialchars($social['lien']) . '" target="_blank">';
+        echo '<img src="./images/' . htmlspecialchars($social['nomsocial']) . '.png" alt="' . htmlspecialchars($social['nomsocial']) . '">';
+        echo '</a>';
+        echo '</li>';
+       }
        echo '</ul>';
     }
 
@@ -306,7 +310,7 @@ public function avis($ismarque,$entity){
 
         <footer>
             <div class="left">
-                <img src="./images/logo" alt="logo" width="300px">
+                <img src="./images/logo.svg" alt="logo" width="300px">
                 <p>&copy; 2023 All Rights Reserved. Privacy Policy</p>
             </div>
             <div class="right">

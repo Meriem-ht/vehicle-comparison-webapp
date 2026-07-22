@@ -1,6 +1,7 @@
 # Environnement
 .vscode/
 .env
+config/config.php
 
 # Système
 .DS_Store

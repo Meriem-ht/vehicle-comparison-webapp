@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 session_start();
 require_once("controllers/MarqueController.php");
 require_once("controllers/UserController.php");
@@ -14,7 +17,7 @@ require_once("./controllers/ComparateurController.php");
 require_once("./controllers/CategoriesController.php");
 require_once("./controllers/ContactController.php");
 require_once("./controllers/GuideController.php");
-require_once("./controllers/notFoundController.php");
+require_once("./controllers/NotFoundController.php");
 require_once("views/CommonViews.php");
 $result=null;
 if (isset($_GET['router'])){

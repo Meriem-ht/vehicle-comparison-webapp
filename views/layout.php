@@ -13,6 +13,7 @@ $r=new commonViews();
     <script src="./assets/js/jquery-3.6.0.min.js"></script>
     <script src="https://kit.fontawesome.com/356c3beb3c.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="./assets/css/style.css">
+    <meta charset="UTF-8">
 </head>
 <body>
 <?php
